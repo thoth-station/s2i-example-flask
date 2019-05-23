@@ -1,0 +1,128 @@
+apiVersion: v1
+kind: Template
+metadata:
+  name: s2i-thoth-example
+  annotations:
+    description: An example application integrating OpenShift's s2i with Thoth's recommendation engine.
+    openshift.io/display-name: 'Thoth s2i'
+    version: 0.0.1
+    tags: thoth,openshift,s2i
+    template.openshift.io/provider-display-name: Red Hat, Inc.
+  labels:
+    template: s2i-thoth
+    app: s2i-thoth
+
+objects:
+  - apiVersion: v1
+    kind: BuildConfig
+    metadata:
+      name: s2i-thoth
+      labels:
+        app: s2i-thoth
+    spec:
+      successfulBuildsHistoryLimit: 1
+      failedBuildsHistoryLimit: 2
+      resources:
+        requests:
+          cpu: 1
+          memory: 512Mi
+        limits:
+          cpu: 1
+          memory: 512Mi
+      output:
+        to:
+          kind: ImageStreamTag
+          name: s2i-thoth:latest
+      source:
+        type: Git
+        git:
+          uri: https://github.com/thoth-station/s2i-thoth
+          ref: master
+      strategy:
+        type: Source
+        sourceStrategy:
+          from:
+            kind: ImageStreamTag
+            name: python-36-centos7:latest
+          env:
+            - name: ENABLE_PIPENV
+              value: '1'
+            - name: WEB_CONCURRENCY
+              value: '4'
+      triggers:
+        - type: ImageChange
+          imageChange: {}
+
+  - kind: Route
+    apiVersion: v1
+    metadata:
+      name: s2i-thoth
+      labels:
+        app: s2i-thoth
+    spec:
+      to:
+        kind: Service
+        name: s2i-thoth
+
+  - kind: Service
+    apiVersion: v1
+    metadata:
+      labels:
+        app: s2i-thoth
+        service: s2i-thoth
+      name: s2i-thoth
+    spec:
+      ports:
+        - port: 80
+          protocol: TCP
+          targetPort: 8080
+      selector:
+        service: s2i-thoth
+
+  - kind: DeploymentConfig
+    apiVersion: v1
+    metadata:
+      labels:
+        app: s2i-thoth
+      name: s2i-thoth
+    spec:
+      replicas: 1
+      selector:
+        service: s2i-thoth
+      template:
+        metadata:
+          labels:
+            service: s2i-thoth
+        spec:
+          containers:
+            - name: s2i-thoth
+              ports:
+                - containerPort: 8080
+                  protocol: TCP
+              resources:
+                requests:
+                  memory: 512Mi
+                  cpu: 250m
+                limits:
+                  memory: 512Mi
+                  cpu: 500m
+      test: false
+      triggers:
+        - type: ConfigChange
+        - type: ImageChange
+          imageChangeParams:
+            automatic: true
+            containerNames:
+              - s2i-thoth
+            from:
+              kind: ImageStreamTag
+              name: s2i-thoth:latest
+
+  - kind: ImageStream
+    apiVersion: v1
+    metadata:
+      labels:
+        app: s2i-thoth
+      name: s2i-thoth
+    spec:
+      name: S2i-thoth
