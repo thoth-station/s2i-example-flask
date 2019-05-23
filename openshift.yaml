@@ -49,6 +49,8 @@ objects:
               value: '1'
             - name: WEB_CONCURRENCY
               value: '4'
+            - name: THAMOS_NO_PROGRESSBAR
+              value: "1"
       triggers:
         - type: ImageChange
           imageChange: {}
