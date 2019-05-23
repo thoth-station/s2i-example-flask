@@ -22,4 +22,4 @@ pushd /tmp/src
 }
 
 popd
-/usr/libexec/s2i/assemble
+exec /usr/libexec/s2i/assemble
