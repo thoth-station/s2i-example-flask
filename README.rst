@@ -31,3 +31,16 @@ To remove this application from OpenShift:
 
   oc delete all --selector 'app=downshift'
 
+
+Using Thoth in your s2i builds
+==============================
+
+To enable Thoth in your s2i builds, copy content of `.s2i` directory present in
+this repository into your Git repository which is s2i enabled and remove
+`Pipfile.lock` from your repository (locking is left on Thoth based on the
+recommendation engine). And thats it!
+
+... optionally you might want to configure thamos client with additional
+options by using configuration file template - `see README in thamos repository
+<https://github.com/thoth-station/thamos#using-custom-configuration-file-template>_`.
+
