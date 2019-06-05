@@ -42,5 +42,5 @@ recommendation engine). And thats it!
 
 ... optionally you might want to configure thamos client with additional
 options by using configuration file template - `see README in thamos repository
-<https://github.com/thoth-station/thamos#using-custom-configuration-file-template>_`.
+<https://github.com/thoth-station/thamos#using-custom-configuration-file-template>`_.
 
