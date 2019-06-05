@@ -29,7 +29,7 @@ To remove this application from OpenShift:
 
 .. code-block:: console
 
-  oc delete all --selector 'app=downshift'
+  oc delete all --selector 'app=s2i-thoth'
 
 
 Using Thoth in your s2i builds
