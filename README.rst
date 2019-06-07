@@ -1,7 +1,7 @@
 s2i-thoth-example
 -----------------
 
-This is an example s2i application which uses Thoth's recommendations in OpenShift.
+This is an example S2I application which uses Thoth's recommendations.
 
 Usage
 =====
@@ -12,7 +12,7 @@ To deploy this application to OpenShift:
 
   oc process -f openshift.yaml | oc apply -f -
 
-A pre-requirement for this application is a centos:7 python image (Python3.6 s2i).
+The BuildConfi is using UBI8 Pythpn 3.6 to build the application.
 
 Once the templates get applied, a build is started. As there is no
 ``Pipfile.lock`` present (no locked dependencies), Thoth is contacted (see
@@ -29,7 +29,7 @@ To remove this application from OpenShift:
 
 .. code-block:: console
 
-  oc delete all --selector 'app=s2i-thoth'
+  oc delete all --selector 'app=s2i-thoth-example'
 
 
 Using Thoth in your s2i builds
