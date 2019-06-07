@@ -12,7 +12,7 @@ To deploy this application to OpenShift:
 
   oc process -f openshift.yaml | oc apply -f -
 
-The BuildConfi is using UBI8 Pythpn 3.6 to build the application.
+The BuildConfig is using UBI8 Pythpn 3.6 to build the application.
 
 Once the templates get applied, a build is started. As there is no
 ``Pipfile.lock`` present (no locked dependencies), Thoth is contacted (see
