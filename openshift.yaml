@@ -46,7 +46,7 @@ objects:
       source:
         type: Git
         git:
-          uri: "https://github.com/thoth-station/s2i-thoth"
+          uri: "https://github.com/thoth-station/s2i-thoth-example"
           ref: "master"
       strategy:
         type: Source
@@ -102,14 +102,14 @@ objects:
     spec:
       replicas: 1
       selector:
-        service: s2i-thoth
+        service: "s2i-thoth"
       template:
         metadata:
           labels:
-            service: s2i-thoth
+            service: "s2i-thoth"
         spec:
           containers:
-            - name: "s2i-thoth-example"
+            - name: "s2i-thoth"
               ports:
                 - containerPort: 8080
                   protocol: TCP
@@ -127,10 +127,10 @@ objects:
           imageChangeParams:
             automatic: true
             containerNames:
-              - s2i-thoth
+              - "s2i-thoth"
             from:
               kind: ImageStreamTag
-              name: s2i-thoth-example:latest
+              name: "s2i-thoth-example:latest"
 
   - apiVersion: "image.openshift.io/v1"
     kind: ImageStream
