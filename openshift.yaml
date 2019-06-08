@@ -3,22 +3,32 @@ kind: Template
 metadata:
   name: s2i-thoth-example
   annotations:
-    description: An example application integrating OpenShift's s2i with Thoth's recommendation engine.
-    openshift.io/display-name: 'Thoth s2i'
-    version: 0.0.1
-    tags: thoth,openshift,s2i
-    template.openshift.io/provider-display-name: Red Hat, Inc.
+    openshift.io/display-name: "Thoth S2I Example"
+    openshift.io/documentation-url: "https://github.com/thoth-station/s2i-thoth-example"
+    openshift.io/provider-display-name: "Red Hat, Inc."
+    description: |-
+      An example application integrating OpenShift's s2i with Thoth's recommendation engine.
+    version: 0.2.0
+    tags: thoth,openshift,s2i,python
+    iconClass: icon-python
   labels:
     template: s2i-thoth
-    app: s2i-thoth
+    app: "s2i-thoth-example"
+
+parameters:
+  - description: "Thoth Environment to use for retrieving advices."
+    displayName: "Environment"
+    name: "THOTH_ENVIRONMENT_NAME"
+    required: true
+    value: "test"
 
 objects:
-  - apiVersion: v1
-    kind: BuildConfig
+  - kind: BuildConfig
+    apiVersion: v1
     metadata:
-      name: s2i-thoth
+      name: "s2i-thoth-example"
       labels:
-        app: s2i-thoth
+        app: "s2i-thoth-example"
     spec:
       successfulBuildsHistoryLimit: 1
       failedBuildsHistoryLimit: 2
@@ -32,25 +42,27 @@ objects:
       output:
         to:
           kind: ImageStreamTag
-          name: s2i-thoth:latest
+          name: "s2i-thoth-example:latest"
       source:
         type: Git
         git:
-          uri: https://github.com/thoth-station/s2i-thoth
-          ref: master
+          uri: "https://github.com/thoth-station/s2i-thoth-example"
+          ref: "master"
       strategy:
         type: Source
         sourceStrategy:
           from:
             kind: ImageStreamTag
-            name: python-36-centos7:latest
+            name: "s2i-thoth-python-36:latest"
           env:
-            - name: ENABLE_PIPENV
-              value: '1'
-            - name: WEB_CONCURRENCY
-              value: '4'
-            - name: THAMOS_NO_PROGRESSBAR
+            - name: "ENABLE_PIPENV"
               value: "1"
+            - name: "WEB_CONCURRENCY"
+              value: "4"
+            - name: "THAMOS_NO_PROGRESSBAR"
+              value: "1"
+            - name: "THOTH_ENVIRONMENT_NAME"
+              value: "${THOTH_ENVIRONMENT_NAME}"
       triggers:
         - type: ImageChange
           imageChange: {}
@@ -58,21 +70,21 @@ objects:
   - kind: Route
     apiVersion: v1
     metadata:
-      name: s2i-thoth
+      name: "s2i-thoth-example"
       labels:
-        app: s2i-thoth
+        app: "s2i-thoth-example"
     spec:
       to:
         kind: Service
-        name: s2i-thoth
+        name: "s2i-thoth-example"
 
   - kind: Service
     apiVersion: v1
     metadata:
       labels:
-        app: s2i-thoth
+        app: "s2i-thoth-example"
         service: s2i-thoth
-      name: s2i-thoth
+      name: "s2i-thoth-example"
     spec:
       ports:
         - port: 80
@@ -85,19 +97,19 @@ objects:
     apiVersion: v1
     metadata:
       labels:
-        app: s2i-thoth
-      name: s2i-thoth
+        app: "s2i-thoth-example"
+      name: "s2i-thoth-example"
     spec:
       replicas: 1
       selector:
-        service: s2i-thoth
+        service: "s2i-thoth"
       template:
         metadata:
           labels:
-            service: s2i-thoth
+            service: "s2i-thoth"
         spec:
           containers:
-            - name: s2i-thoth
+            - name: "s2i-thoth"
               ports:
                 - containerPort: 8080
                   protocol: TCP
@@ -115,16 +127,31 @@ objects:
           imageChangeParams:
             automatic: true
             containerNames:
-              - s2i-thoth
+              - "s2i-thoth"
             from:
               kind: ImageStreamTag
-              name: s2i-thoth:latest
+              name: "s2i-thoth-example:latest"
 
-  - kind: ImageStream
-    apiVersion: v1
+  - apiVersion: "image.openshift.io/v1"
+    kind: ImageStream
     metadata:
       labels:
-        app: s2i-thoth
-      name: s2i-thoth
+        app: "s2i-thoth-example"
+      name: "s2i-thoth-example"
     spec:
-      name: S2i-thoth
+      name: "s2i-thoth-example"
+
+  - apiVersion: "image.openshift.io/v1"
+    kind: ImageStream
+    metadata:
+      labels:
+        app: "s2i-thoth-example"
+      name: "s2i-thoth-python-36"
+    spec:
+      tags:
+        - name: "latest"
+          from:
+            kind: "DockerImage"
+            name: "registry.access.redhat.com/ubi8/python-36"
+          referencePolicy:
+            type: "Source"
