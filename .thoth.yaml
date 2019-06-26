@@ -8,4 +8,3 @@ runtime_environments:
       name: fedora
       version: '28'
     python_version: '3.6'
-    recommendation_type: LATEST
