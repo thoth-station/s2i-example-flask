@@ -63,6 +63,8 @@ objects:
               value: "1"
             - name: "THOTH_ENVIRONMENT_NAME"
               value: "${THOTH_ENVIRONMENT_NAME}"
+            - name: "THAMOS_CONFIG_TEMPLATE"
+              value: "thoth_conf_template.yaml"
       triggers:
         - type: ImageChange
           imageChange: {}
