@@ -12,8 +12,7 @@ pushd /tmp/src
   pip install --upgrade pip
   # Update needed for setup.cfg support in invectio.
   pip3 install --upgrade setuptools
-  pip3 install git+https://github.com/thoth-station/invectio
-  pip3 install thamos
+  pip3 install git+https://github.com/thoth-station/thamos
 
   echo "Performing hardware dicovery..."
   thamos config --no-interactive

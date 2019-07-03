@@ -1,0 +1,12 @@
+host: khemenu.thoth-station.ninja
+tls_verify: false
+requirements_format: pipenv
+
+runtime_environments:
+  - name: '{os_name}:{os_version}'
+    operating_system:
+      name: '{os_name}'
+      version: '{os_version}'
+    python_version: '{python_version}'
+    recommendation_type: LATEST
+
