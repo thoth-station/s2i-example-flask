@@ -8,5 +8,5 @@ runtime_environments:
       name: 'fedora'
       version: '28'
     python_version: '{python_version}'
-    recommendation_type: LATEST
+    recommendation_type: STABLE
 
