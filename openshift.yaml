@@ -1,10 +1,10 @@
 apiVersion: v1
 kind: Template
 metadata:
-  name: s2i-thoth-example
+  name: s2i-example-flask
   annotations:
     openshift.io/display-name: "Thoth S2I Example"
-    openshift.io/documentation-url: "https://github.com/thoth-station/s2i-thoth-example"
+    openshift.io/documentation-url: "https://github.com/thoth-station/s2i-example-flask"
     openshift.io/provider-display-name: "Red Hat, Inc."
     description: |-
       An example application integrating OpenShift's s2i with Thoth's recommendation engine.
@@ -12,23 +12,23 @@ metadata:
     tags: thoth,openshift,s2i,python
     iconClass: icon-python
   labels:
-    template: s2i-thoth
-    app: "s2i-thoth-example"
+    template: s2i-example-flask
+    app: "s2i-example-flask"
 
 parameters:
   - description: "Thoth Environment to use for retrieving advices."
     displayName: "Environment"
     name: "THOTH_ENVIRONMENT_NAME"
     required: true
-    value: "test"
+    value: "khemenu.thoth-station.ninja"
 
 objects:
   - kind: BuildConfig
     apiVersion: v1
     metadata:
-      name: "s2i-thoth-example"
+      name: "s2i-example-flask"
       labels:
-        app: "s2i-thoth-example"
+        app: "s2i-example-flask"
     spec:
       successfulBuildsHistoryLimit: 1
       failedBuildsHistoryLimit: 2
@@ -42,11 +42,11 @@ objects:
       output:
         to:
           kind: ImageStreamTag
-          name: "s2i-thoth-example:latest"
+          name: "s2i-example-flask:latest"
       source:
         type: Git
         git:
-          uri: "https://github.com/thoth-station/s2i-thoth-example"
+          uri: "https://github.com/thoth-station/s2i-example-flask"
           ref: "master"
       strategy:
         type: Source
@@ -59,10 +59,12 @@ objects:
               value: "1"
             - name: "WEB_CONCURRENCY"
               value: "4"
+            - name: "THOTH_HOST"
+              value: "${THOTH_HOST}"
+            - name: "THAMOS_CONFIG_EXPAND_ENV"
+              value: "1"
             - name: "THAMOS_NO_PROGRESSBAR"
               value: "1"
-            - name: "THOTH_ENVIRONMENT_NAME"
-              value: "${THOTH_ENVIRONMENT_NAME}"
             - name: "THAMOS_CONFIG_TEMPLATE"
               value: "thoth_conf_template.yaml"
             - name: "THAMOS_FORCE"
@@ -78,46 +80,46 @@ objects:
   - kind: Route
     apiVersion: v1
     metadata:
-      name: "s2i-thoth-example"
+      name: "s2i-example-flask"
       labels:
-        app: "s2i-thoth-example"
+        app: "s2i-example-flask"
     spec:
       to:
         kind: Service
-        name: "s2i-thoth-example"
+        name: "s2i-example-flask"
 
   - kind: Service
     apiVersion: v1
     metadata:
       labels:
-        app: "s2i-thoth-example"
-        service: s2i-thoth
-      name: "s2i-thoth-example"
+        app: "s2i-example-flask"
+        service: s2i-example-flask
+      name: "s2i-example-flask"
     spec:
       ports:
         - port: 80
           protocol: TCP
           targetPort: 8080
       selector:
-        service: s2i-thoth
+        service: s2i-example-flask
 
   - kind: DeploymentConfig
     apiVersion: v1
     metadata:
       labels:
-        app: "s2i-thoth-example"
-      name: "s2i-thoth-example"
+        app: "s2i-example-flask"
+      name: "s2i-example-flask"
     spec:
       replicas: 1
       selector:
-        service: "s2i-thoth"
+        service: "s2i-example-flask"
       template:
         metadata:
           labels:
-            service: "s2i-thoth"
+            service: "s2i-example-flask"
         spec:
           containers:
-            - name: "s2i-thoth"
+            - name: "s2i-example-flask"
               ports:
                 - containerPort: 8080
                   protocol: TCP
@@ -135,25 +137,25 @@ objects:
           imageChangeParams:
             automatic: true
             containerNames:
-              - "s2i-thoth"
+              - "s2i-example-flask"
             from:
               kind: ImageStreamTag
-              name: "s2i-thoth-example:latest"
+              name: "s2i-example-flask:latest"
 
   - apiVersion: "image.openshift.io/v1"
     kind: ImageStream
     metadata:
       labels:
-        app: "s2i-thoth-example"
-      name: "s2i-thoth-example"
+        app: "s2i-example-flask"
+      name: "s2i-example-flask"
     spec:
-      name: "s2i-thoth-example"
+      name: "s2i-example-flask"
 
   - apiVersion: "image.openshift.io/v1"
     kind: ImageStream
     metadata:
       labels:
-        app: "s2i-thoth-example"
+        app: "s2i-example-flask"
       name: "s2i-thoth-python-36"
     spec:
       tags:

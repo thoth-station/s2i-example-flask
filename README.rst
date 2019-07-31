@@ -1,7 +1,16 @@
-s2i-thoth-example
------------------
+Thoth's Flask stack guidance example
+------------------------------------
 
-This is an example S2I application which uses Thoth's recommendations.
+This is an example of OpenShift's s2i (source-to-image) application which uses
+Thoth's recommendations to recommend a Flask stack for a specific hardware
+where Flask application is supposed to be run together with software
+environment (base image).
+
+The application is showing a generic approach and how to integrate inside
+OpenShift's s2i build process. To have recommendations suited for your specific
+hardware, you need to configure the build to be done on specific hardware where
+the application is supposed to be run (specific node placement for build and
+application run which should match).
 
 Usage
 =====
@@ -10,37 +19,25 @@ To deploy this application to OpenShift:
 
 .. code-block:: console
 
+  oc project <YOUR-PROJECT-NAME>
   oc process -f openshift.yaml | oc apply -f -
 
-The BuildConfig is using UBI8 Pythpn 3.6 to build the application.
-
-Once the templates get applied, a build is started. As there is no
-``Pipfile.lock`` present (no locked dependencies), Thoth is contacted (see
-``.thoth.yaml`` configuration file for info on configuration options).
-
-Thoth computes recommendations and gives back a ``Pipfile.lock`` with
-additional guidance on software stack (see build logs). Note that computing
-recommendations takes some time, there is assigned certain amount of CPU based
-on Thoth's backend configuration. Results are cached (3 hours by default) so
-next builds are faster (unless forced or any configuration change on client
-side).
+After applying the templates, the build should be started. As there is no
+``Pipfile.lock`` provided, Thoth is contacted to give guidance for the deployed
+application. Computing recommendations for the application stack used in this
+application takes approximately 10 seconds - the time after which you get back
+recommendations varies based on load and deployment you are contacting.
 
 To remove this application from OpenShift:
 
 .. code-block:: console
 
-  oc delete all --selector 'app=s2i-thoth-example'
+  oc delete all --selector 'app=s2i-example-flask'
 
+Additional information
+======================
 
-Using Thoth in your s2i builds
-==============================
-
-To enable Thoth in your s2i builds, copy content of `.s2i` directory present in
-this repository into your Git repository which is s2i enabled and remove
-`Pipfile.lock` from your repository (locking is left on Thoth based on the
-recommendation engine). And thats it!
-
-... optionally you might want to configure thamos client with additional
-options by using configuration file template - `see README in thamos repository
-<https://github.com/thoth-station/thamos#using-custom-configuration-file-template>`_.
+Please take a look at `s2i-example-tensorflow
+<https://github.com/thoth-station/s2i-example-tensorflow>`_ which has
+additional info and documented configuration options.
 
