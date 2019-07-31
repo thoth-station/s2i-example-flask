@@ -18,7 +18,7 @@ metadata:
 parameters:
   - description: "Thoth Environment to use for retrieving advices."
     displayName: "Environment"
-    name: "THOTH_ENVIRONMENT_NAME"
+    name: "THOTH_HOST"
     required: true
     value: "khemenu.thoth-station.ninja"
 
